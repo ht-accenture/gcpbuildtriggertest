@@ -19,5 +19,9 @@ resource "google_cloudbuild_trigger" "build-trigger" {
       args = ["mb", "gs://test-bucket-hopefully-created-with-tf"]
       timeout = "120s"
     }
+    step {
+      name = "gcr.io/google.com/cloudsdktool/cloud-sdk"
+      entrypoint = "gcloud"
+      args = ["pubsub", "topics", "create", "bucket-metadata-topic"]
   }  
 }
