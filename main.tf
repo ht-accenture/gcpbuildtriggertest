@@ -23,5 +23,7 @@ resource "google_cloudbuild_trigger" "build-trigger" {
       name = "gcr.io/google.com/cloudsdktool/cloud-sdk"
       entrypoint = "gcloud"
       args = ["pubsub", "topics", "create", "bucket-metadata-topic"]
+      timeout = "120s"
+    }
   }  
 }
