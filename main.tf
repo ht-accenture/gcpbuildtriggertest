@@ -1,29 +1,91 @@
 resource "google_project_service" "this" {
-    for_each           = toset(var.services-list)
-    
-    disable_on_destroy = false
-    project            = var.project-id
-    
-    service            = each.value
+  for_each = toset(var.services-list)
+
+  disable_on_destroy = false
+  project            = var.project-id
+
+  service = each.value
 }
 
 resource "google_cloudbuild_trigger" "build-trigger" {
-  trigger_template {
-    branch_name = "master"
-    repo_name   = "https://github.com/ht-accenture/gcpbuildtriggertest"
+  github {
+    owner = "ht-accenture"
+    name  = "gcpbuildtriggertest"
+
+    push {
+      branch = "master"
+    }
   }
 
   build {
     step {
-      name = "gcr.io/cloud-builders/gsutil"
-      args = ["mb", "gs://test-bucket-hopefully-created-with-tf"]
-      timeout = "120s"
+      #name    = "gcr.io/cloudbuilders/gsutil/"
+      name    = "terraform"
+      args    = ["apply"]
+      timeout = "300s"
     }
-    step {
-      name = "gcr.io/google.com/cloudsdktool/cloud-sdk"
-      entrypoint = "gcloud"
-      args = ["pubsub", "topics", "create", "bucket-metadata-topic"]
-      timeout = "120s"
-    }
-  }  
+  }
+  depends_on = [
+    google_cloudfunctions_function.metadata-listener,
+    google_pubsub_topic.pubsub,
+    google_storage_bucket.observed-bucket
+  ]
 }
+
+resource "google_storage_bucket" "observed-bucket" {
+  name          = "chapter4-test-bucket-328412"
+  location      = "EU"
+  force_destroy = true
+}
+
+data "archive_file" "function-code" {
+  type		= "zip"
+  output_path	= "${path.module}/func.zip"
+  source_file	= "${path.module}/src/main.py"
+}
+
+resource "google_storage_bucket_object" "src" {
+  name		= "func.zip"
+  bucket	= google_storage_bucket.observed-bucket.name
+  source	= "${path.module}/func.zip"
+  depends_on	= [data.archive_file.function-code]
+}
+
+resource "google_pubsub_topic" "pubsub" {
+  name = "bucket-topic"
+}
+
+resource "google_cloudfunctions_function" "metadata-listener" {
+  name    = "listener-function"
+  runtime = "python38"
+  region  = var.region
+  depends_on = [
+    google_storage_bucket.observed-bucket,
+    google_storage_bucket_object.src
+  ]
+
+  entry_point           = "start"
+  source_archive_bucket = google_storage_bucket.observed-bucket.name
+  source_archive_object = google_storage_bucket_object.src.name
+  event_trigger {
+    event_type = "google.storage.object.finalize"
+    resource   = google_storage_bucket.observed-bucket.name
+  }
+}
+
+resource "google_storage_bucket" "new-bucket" {
+  name		= "new-bucket-from-cloud-build"
+  location	= "EU"
+  force_destroy	= true
+}
+#resource "google_storage_bucket" "gcf-storage" {
+#  name		= var.gcf-storage
+#  location	= "EUROPE-WEST3"
+#  force_destroy	= true
+#}
+
+#resource "google_storage_bucket" "artifacts-storage" {
+#  name		= var.artifacts-storage
+#  location	= "EU"
+#  force_destroy	= true
+#}
