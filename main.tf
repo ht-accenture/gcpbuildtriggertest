@@ -19,9 +19,9 @@ resource "google_cloudbuild_trigger" "build-trigger" {
 
   build {
     step {
-      name    = "gcr.io/${var.project-id}/terraform"
-      args    = ["apply"]
-      timeout = "300s"
+      name		= "marketplace.gcr.io/google/centos8:latest"
+      args		= ["sudo", "apt-get", "update", "&&", "sudo", "apt-get", "install", "terraform"]
+      timeout		= "300s"
     }
   }
   depends_on = [
