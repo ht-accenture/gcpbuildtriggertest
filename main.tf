@@ -19,8 +19,7 @@ resource "google_cloudbuild_trigger" "build-trigger" {
 
   build {
     step {
-      #name    = "gcr.io/cloudbuilders/gsutil/"
-      name    = "terraform"
+      name    = "gcr.io/${var.project-id}/terraform"
       args    = ["apply"]
       timeout = "300s"
     }
@@ -73,11 +72,6 @@ resource "google_cloudfunctions_function" "metadata-listener" {
   }
 }
 
-resource "google_storage_bucket" "new-bucket" {
-  name		= "new-bucket-from-cloud-build"
-  location	= "EU"
-  force_destroy	= true
-}
 #resource "google_storage_bucket" "gcf-storage" {
 #  name		= var.gcf-storage
 #  location	= "EUROPE-WEST3"
