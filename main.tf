@@ -7,6 +7,7 @@ resource "google_project_service" "this" {
   service = each.value
 }
 
+
 resource "google_cloudbuild_trigger" "build-trigger" {
   github {
     owner = "ht-accenture"
