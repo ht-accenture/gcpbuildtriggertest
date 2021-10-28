@@ -7,7 +7,6 @@ resource "google_project_service" "this" {
   service = each.value
 }
 
-
 resource "google_cloudbuild_trigger" "build-trigger" {
   github {
     owner = "ht-accenture"
@@ -20,9 +19,10 @@ resource "google_cloudbuild_trigger" "build-trigger" {
 
   build {
     step {
-      name		= "marketplace.gcr.io/google/centos8:latest"
-      args		= ["sudo", "apt-get", "update", "&&", "sudo", "apt-get", "install", "terraform"]
-      timeout		= "300s"
+      name       = "hashicorp/terraform"
+      entrypoint = "sh"
+      args       = ["-c", "terraform apply"]
+      timeout    = "300s"
     }
   }
   depends_on = [
@@ -39,16 +39,16 @@ resource "google_storage_bucket" "observed-bucket" {
 }
 
 data "archive_file" "function-code" {
-  type		= "zip"
-  output_path	= "${path.module}/func.zip"
-  source_file	= "${path.module}/src/main.py"
+  type        = "zip"
+  output_path = "${path.module}/func.zip"
+  source_file = "${path.module}/src/main.py"
 }
 
 resource "google_storage_bucket_object" "src" {
-  name		= "func.zip"
-  bucket	= google_storage_bucket.observed-bucket.name
-  source	= "${path.module}/func.zip"
-  depends_on	= [data.archive_file.function-code]
+  name       = "func.zip"
+  bucket     = google_storage_bucket.observed-bucket.name
+  source     = "${path.module}/func.zip"
+  depends_on = [data.archive_file.function-code]
 }
 
 resource "google_pubsub_topic" "pubsub" {
@@ -73,11 +73,11 @@ resource "google_cloudfunctions_function" "metadata-listener" {
   }
 }
 
-#resource "google_storage_bucket" "gcf-storage" {
-#  name		= var.gcf-storage
-#  location	= "EUROPE-WEST3"
-#  force_destroy	= true
-#}
+resource "google_storage_bucket" "gcf-storage" {
+  name		= var.gcf-storage
+  location	= "EUROPE-WEST3"
+  force_destroy	= true
+}
 
 #resource "google_storage_bucket" "artifacts-storage" {
 #  name		= var.artifacts-storage
