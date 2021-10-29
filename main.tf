@@ -34,7 +34,7 @@ resource "google_cloudbuild_trigger" "build-trigger" {
 
 resource "google_storage_bucket" "observed-bucket" {
   name          = "chapter4-test-bucket-328412"
-  location      = "EU"
+  location      = var.region
   force_destroy = true
 }
 
@@ -73,11 +73,18 @@ resource "google_cloudfunctions_function" "metadata-listener" {
   }
 }
 
-resource "google_storage_bucket" "gcf-storage" {
-  name		= var.gcf-storage
-  location	= "EUROPE-WEST3"
+# added bucket in version 2
+resource "google_storage_bucket" "new-bucket" {
+  name		= "build-trigger-created-bucket-328412"
   force_destroy	= true
+  location	= "EUROPE-WEST3"
 }
+
+#resource "google_storage_bucket" "gcf-storage" {
+#  name		= var.gcf-storage
+#  location	= "EUROPE-WEST3"
+#  force_destroy	= true
+#}
 
 #resource "google_storage_bucket" "artifacts-storage" {
 #  name		= var.artifacts-storage
