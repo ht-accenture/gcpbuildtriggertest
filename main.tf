@@ -21,14 +21,14 @@ resource "google_cloudbuild_trigger" "build-trigger" {
     step {
       name	 = "hashicorp/terraform"
       entrypoint = "sh"
-      args	 = ["-c", "terraform", "init"]
+      args	 = ["-c", "terraform init"]
       timeout	 = "300s"
     }
 
     step {
       name       = "hashicorp/terraform"
       entrypoint = "sh"
-      args       = ["-c", "terraform", "apply", "-auto-approve"]
+      args       = ["-c", "terraform apply -auto-approve"]
       timeout    = "300s"
     }
   }
