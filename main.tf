@@ -18,12 +18,12 @@ resource "google_cloudbuild_trigger" "build-trigger" {
   }
 
   build {
-    #step {
-    #  name	 = "hashicorp/terraform"
-    #  entrypoint = "sh"
-    #  args	 = ["-c", "terraform", "init"]
-    #  timeout	 = "300s"
-    #}
+    step {
+      name	 = "hashicorp/terraform"
+      entrypoint = "sh"
+      args	 = ["-c", "terraform", "init"]
+      timeout	 = "300s"
+    }
 
     step {
       name       = "hashicorp/terraform"
@@ -81,11 +81,11 @@ resource "google_cloudfunctions_function" "metadata-listener" {
 }
 
 # added bucket in version 2
-resource "google_storage_bucket" "new-bucket" {
-  name		= "build-trigger-created-bucket-328412"
-  force_destroy	= true
-  location	= "EUROPE-WEST3"
-}
+#resource "google_storage_bucket" "new-bucket" {
+#  name		= "build-trigger-created-bucket-328412"
+#  force_destroy	= true
+#  location	= "EUROPE-WEST3"
+#}
 
 #resource "google_storage_bucket" "gcf-storage" {
 #  name		= var.gcf-storage
