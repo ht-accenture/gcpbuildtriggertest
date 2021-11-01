@@ -1,0 +1,3 @@
+# terraform local files
+./.terraform/*
+.terraform.lock.hcl
