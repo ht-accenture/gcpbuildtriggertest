@@ -21,8 +21,8 @@ resource "google_cloudbuild_trigger" "build-trigger" {
     step {
       name	 = "hashicorp/terraform"
       entrypoint = "sh"
-      args	 = ["-c", "terraform init"]
-      timeout	 = "120s"
+      args	 = ["-c", "terraform", "init"]
+      timeout	 = "300s"
     }
 
     step {
