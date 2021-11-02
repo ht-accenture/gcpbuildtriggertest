@@ -32,11 +32,6 @@ resource "google_cloudbuild_trigger" "build-trigger" {
       timeout    = "300s"
     }
   }
-  depends_on = [
-    google_cloudfunctions_function.metadata-listener,
-    google_pubsub_topic.pubsub,
-    google_storage_bucket.observed-bucket
-  ]
 }
 
 resource "google_storage_bucket" "observed-bucket" {
