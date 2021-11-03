@@ -12,6 +12,9 @@ def start(event, context):
     + ".\nTime of creation: " + str(event['timeCreated']) \
     + "\nSize: " + str(event['size'])\
     + "\n"
+
+    # encode message
+    message_bytes = message.encode('utf-8')
     
     # TODO fill in the following details and uncomment the lines
     project_id = "still-protocol-328412"
@@ -22,7 +25,7 @@ def start(event, context):
         project_id=project_id, topic=topic_name)
 
     #publish the message to the topic
-    pm = publisher.publish(topic_name, message)
+    pm = publisher.publish(topic_name, data=message_bytes)
     # block until message publishing is complete
     pm.result()
 
