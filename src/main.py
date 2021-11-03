@@ -13,8 +13,8 @@ def start(event, context):
     + "\n"
     
     # TODO fill in the following details and uncomment the lines
-    # project_id = "<your-project-id>"
-    # topic_name = "<your-topic-name>"
+    project_id = "still-protocol-328412"
+    topic_name = "bucket-topic"
 
     publisher = pubsub_v1.PublisherClient()
     topic_name = 'projects/{project_id}/topics/{topic}'.format(
