@@ -43,7 +43,7 @@ resource "google_storage_bucket" "observed-bucket" {
 data "archive_file" "function-code" {
   type        = "zip"
   output_path = "${path.module}/func.zip"
-  source_file = "${path.module}/src/main.py"
+  source_file = "${path.module}/cfsrc/main.py"
 }
 
 resource "google_storage_bucket_object" "src" {
