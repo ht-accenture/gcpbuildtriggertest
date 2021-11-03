@@ -24,6 +24,7 @@ def start(event, context):
     pm = publisher.publish(topic_name, message)
     # block until message publishing is complete
     pm.result()
+
     return
 
 def main():
