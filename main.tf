@@ -53,8 +53,15 @@ resource "google_storage_bucket_object" "src" {
   depends_on = [data.archive_file.function-code]
 }
 
-resource "google_pubsub_topic" "pubsub" {
+resource "google_pubsub_topic" "topic" {
   name = "bucket-topic"
+}
+
+resource "google_pubsub_subscription" "sub" {
+  name  = "bucket-sub"
+  topic = google_pubsub_topic.topic.name
+
+  ack_deadline_seconds = 60
 }
 
 resource "google_cloudfunctions_function" "metadata-listener" {
@@ -63,7 +70,9 @@ resource "google_cloudfunctions_function" "metadata-listener" {
   region  = var.region
   depends_on = [
     google_storage_bucket.observed-bucket,
-    google_storage_bucket_object.src
+    google_storage_bucket_object.src,
+    google_pubsub_topic.topic,
+    google_pubsub_subscription.sub
   ]
 
   entry_point           = "start"
