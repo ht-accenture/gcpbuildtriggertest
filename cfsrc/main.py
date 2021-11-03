@@ -4,12 +4,13 @@ from google.cloud import pubsub_v1
 
 # function that will be triggered when an object is finalized
 def start(event, context):
+
     # the message to publish, made up of information from the event
     message = \
-    "An object, with the name: " + event['name']
-    + " has been successfully uploaded to the bucket: " + event['bucket']
-    + ".\nTime of creation: " + event['timeCreated']
-    + "\nSize: " + event['size']
+    "An object, with the name: " + str(event['name']) \
+    + " has been successfully uploaded to the bucket: " + str(event['bucket']) \
+    + ".\nTime of creation: " + str(event['timeCreated']) \
+    + "\nSize: " + str(event['size'])\
     + "\n"
     
     # TODO fill in the following details and uncomment the lines
@@ -24,6 +25,7 @@ def start(event, context):
     pm = publisher.publish(topic_name, message)
     # block until message publishing is complete
     pm.result()
+
     return
 
 def main():
