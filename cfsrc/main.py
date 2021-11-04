@@ -1,7 +1,6 @@
 #imports
 from google.cloud import pubsub_v1
 
-
 # function that will be triggered when an object is finalized
 def start(event, context):
 
